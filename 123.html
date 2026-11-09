@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>今天吃什麼？｜抽籤器</title>
+  <style>
+    :root {
+      font-family: system-ui, "Microsoft JhengHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: #f5f3ee;
+      color: #282821;
+    }
+    main {
+      width: min(100%, 520px);
+      padding: 32px;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 12px 40px #24211614;
+    }
+    h1 { margin: 0 0 8px; font-size: 34px; }
+    .intro { color: #6c6a61; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    textarea {
+      width: 100%;
+      min-height: 176px;
+      padding: 16px;
+      resize: vertical;
+      border: 1px solid #d2d0c8;
+      border-radius: 14px;
+      font: inherit;
+      line-height: 1.65;
+    }
+    .hint {
+      margin: 8px 0 20px;
+      font-size: 14px;
+      color: #6c6a61;
+    }
+    button {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 14px;
+      background: #25493d;
+      color: white;
+      font: inherit;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { background: #19362d; }
+    .result {
+      margin-top: 24px;
+      min-height: 138px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 18px;
+      text-align: center;
+      border: 2px dashed #d9d6cd;
+      border-radius: 16px;
+      background: #fbfaf6;
+    }
+    .result-label {
+      font-size: 14px;
+      color: #777368;
+      margin-bottom: 12px;
+    }
+    #resultText {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .error #resultText {
+      font-size: 19px;
+      color: #a33c2f;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>今天吃什麼？</h1>
+    <p class="intro">選擇困難？把候選美食交給運氣吧。</p>
+
+    <label for="options">想吃的選項（每行一個）</label>
+    <textarea id="options">便當
+麵
+咖哩
+水餃</textarea>
+    <p class="hint">
+      抽籤時自動忽略空白行和完全相同的重複選項。
+    </p>
+
+    <button id="pickButton" type="button">幫我選</button>
+
+    <section class="result" id="resultBox"
+             aria-live="polite" aria-atomic="true">
+      <div class="result-label">抽籤結果</div>
+      <p id="resultText">準備好就按「幫我選」</p>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById('options');
+    const button = document.getElementById('pickButton');
+    const resultBox = document.getElementById('resultBox');
+    const resultText = document.getElementById('resultText');
+
+    button.addEventListener('click', () => {
+      // 清理空白並移除重複選項
+      const options = [...new Set(
+        input.value
+          .split(/\r?\n/)
+          .map(item => item.trim())
+          .filter(Boolean)
+      )];
+
+      // 沒有有效選項
+      if (options.length === 0) {
+        resultBox.classList.add('error');
+        resultText.textContent = '請先輸入至少一個選項';
+        return;
+      }
+
+      // 每個有效選項具有相同中選機率
+      const index = Math.floor(Math.random() * options.length);
+      const chosen = options[index];
+
+      // 顯示結果
+      resultBox.classList.remove('error');
+      resultText.textContent = chosen;
+    });
+  </script>
+</body>
+</html>
